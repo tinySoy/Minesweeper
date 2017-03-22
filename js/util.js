@@ -93,11 +93,11 @@ var find = function(element, selector) {
 
 
 /*
-浏览器窗口的高和宽。使用的时候，有三个地方需要注意：
-1）这个函数必须在页面加载完成后才能运行，否则document对象还没生成，浏览器会报错。
-2）大多数情况下，都是document.documentElement.clientWidth返回正确值。
-但是，在IE6的quirks模式中，document.body.clientWidth返回正确的值，因此函数中加入了对文档模式的判断。
-3）clientWidth和clientHeight都是只读属性，不能对它们赋值。
+    浏览器窗口的高和宽。有三个地方需要注意：
+    1）这个函数必须在页面加载完成后才能运行，否则document对象还没生成，浏览器会报错。
+    2）大多数情况下，都是document.documentElement.clientWidth返回正确值。
+    但是，在IE6的quirks模式中，document.body.clientWidth返回正确的值，因此函数中加入了对文档模式的判断。
+    3）clientWidth和clientHeight都是只读属性，不能对它们赋值。
 */
 function getViewport() {　　　　
     if (document.compatMode == "BackCompat") {　　　　　　

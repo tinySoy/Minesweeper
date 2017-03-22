@@ -1,4 +1,5 @@
 //定义唯一全局变量入口
+
 var mineApp = function() {
     this.randomLineArr = []
     //已点击位置的坐标数组
@@ -19,18 +20,18 @@ var mineApp = function() {
 }
 //更新剩余地雷数
 var upDateUnfindMinesNumber = function() {
-    //console.log("upDateUnfindMinesNumber", `gVar.mineMap = ${gVar.mineMap} gVar.marked = ${gVar.marked}`);
+    //log("upDateUnfindMinesNumber", `gVar.mineMap = ${gVar.mineMap} gVar.marked = ${gVar.marked}`);
     gVar.unfindMinesNumber.innerHTML = `剩余雷数：${gVar.mineMap.length - gVar.marked.length}个`
 }
 //判断是否排除所有地雷
 var isClear = function() {
     if (gVar === undefined) {
-        //console.log('gVar is undefined');
+        //log('gVar is undefined');
         return false
     }
     for (var i = 0; i < gVar.marked.length; i++) {
         if (!gVar.mineMap.includes(gVar.marked[i])) {
-            //console.log('isClear', `gVar.mineMap = ${gVar.mineMap} gVar.marked = ${gVar.marked}`);
+            //log('isClear', `gVar.mineMap = ${gVar.mineMap} gVar.marked = ${gVar.marked}`);
             return false
         }
     }
@@ -38,19 +39,19 @@ var isClear = function() {
 }
 //踩中地雷效果
 function boom(element) {
-    //console.log('boom');
+    //log('boom');
     toggleClass(element, 'mine9')
     if (!element.classList.contains('uncovered')) {
         element.classList.add('uncovered')
     }
     removeClassAll('covered')
     addClassAll('m9', 'mine9')
-    //console.log(`gVar.marked = ${gVar.marked} gVar.mineMap = ${gVar.mineMap}`);
+    //log(`gVar.marked = ${gVar.marked} gVar.mineMap = ${gVar.mineMap}`);
     let rightMarked = 0
     for (var i = 0; i < gVar.marked.length; i++) {
         if (!gVar.mineMap.includes(gVar.marked[i])) {
             let tempElement = document.getElementById(gVar.marked[i])
-            //console.log('boom tempElement = ', tempElement);
+            //log('boom tempElement = ', tempElement);
             toggleClass(tempElement, 'mineWrong')
         } else {
             rightMarked++
@@ -62,11 +63,11 @@ function boom(element) {
     Actions(`BOOM !!!!
         time : ${(gVar.finishTime - gVar.startTime)/1000}s
         剩余雷数：${gVar.mineMap.length - rightMarked}个`, ['初级', '中级', '高级'], (x) => {
-        //console.log(`x = ${x}`);
+        //log(`x = ${x}`);
         switch (x) {
             case '0':
                 let button = e('#id-button-primary')
-                //console.log('button = ', button)
+                //log('button = ', button)
                 button.click()
                 break;
             case '1':
@@ -77,24 +78,24 @@ function boom(element) {
                 break;
             default:
         }
-        //    console.log(`time : ${(gVar.finishTime - gVar.startTime)/1000}s`);
+        //    log(`time : ${(gVar.finishTime - gVar.startTime)/1000}s`);
     })
 }
 //未踩中雷效果
 function commonBoom(element) {
-    //console.log('commonBoom');
+    //log('commonBoom');
     element.innerHTML = element.dataset.value
     if (!element.classList.contains('uncovered')) {
         element.classList.add('uncovered')
     }
     //gVar.clicked.push(element.id)
 }
-//如果点击出周围地雷数为0则点亮周围
+// 如果点击出周围地雷数为0则点亮周围
 function showAround(element) {
     let x = element.dataset.locationx
     let y = element.dataset.locationy
-    //console.log('showAround', `x=${x} y=${y}`);
-    // console.log('showAround', `e("#55")=${e("55")}`);
+    // log('showAround', `x=${x} y=${y}`);
+    // log('showAround', `e("#55")=${e("55")}`);
     for (let i = (Number(y) - 1); i <= (Number(y) + 1); i++) {
         for (let j = (Number(x) - 1); j <= (Number(x) + 1); j++) {
             if (i < 10 && i > 0) {
@@ -108,25 +109,26 @@ function showAround(element) {
                 var tempJ = j.toString()
             }
             let tempElement = document.getElementById(tempI + tempJ)
-            //console.log('tempElement = ', tempElement);
+            //log('tempElement = ', tempElement);
             if (tempElement) {
-                //    console.log('showAround', tempElement.id);
+                //    log('showAround', tempElement.id);
                 commonBoom(tempElement)
                 if (tempElement.dataset.value == 0) {
                     if (!gVar.clicked.includes(tempElement.id)) {
                         tempElement.click()
                     }
-                    //    console.log('showAround', `tempElement.dataset.value = ${tempElement.dataset.value}`);
+                    //    log('showAround', `tempElement.dataset.value = ${tempElement.dataset.value}`);
                 }
             }
         }
     }
 }
-//右击标记为雷操作
+
+// 右击标记为雷操作
 function rightClick() {
     function myRightClick() {
         //log("右击成功！")
-        //    console.log(this.classList)
+        //    log(this.classList)
         if (this.classList.contains('uncovered')) {
             return
         }
@@ -137,15 +139,15 @@ function rightClick() {
                     let temp1 = gVar.marked.slice(0, i)
                     let temp2 = gVar.marked.slice(i + 1)
                     gVar.marked = temp1.concat(temp2)
-                    //    console.log('rightClick gVar.marked = ', gVar.marked);
+                    //    log('rightClick gVar.marked = ', gVar.marked);
                 }
             }
             upDateUnfindMinesNumber()
         } else {
             toggleClass(this, 'mineMayBe')
-            //console.log(this.id);
+            //log(this.id);
             gVar.marked.push(this.id)
-            //console.log('rightClick', `gVar.marked = ${gVar.marked} gVar.wholeMine = ${gVar.wholeMine}`)
+            //log('rightClick', `gVar.marked = ${gVar.marked} gVar.wholeMine = ${gVar.wholeMine}`)
             upDateUnfindMinesNumber()
             if (gVar.wholeMine == gVar.marked.length && gVar.wholeMine != 0) {
                 if (isClear()) {
@@ -158,11 +160,11 @@ function rightClick() {
                     Actions(`mines all clear !!!!
                         bestscore : ${bestScore / 1000}
                         thistime : ${time / 1000}s`, ['初级', '中级', '高级'], (x) => {
-                        //    console.log(`x = ${x}`);
+                        //    log(`x = ${x}`);
                         switch (x) {
                             case '0':
                                 let button = e('#id-button-primary')
-                                //        console.log('button = ', button)
+                                //        log('button = ', button)
                                 button.click()
                                 break;
                             case '1':
@@ -173,7 +175,7 @@ function rightClick() {
                                 break;
                             default:
                         }
-                        //    console.log(`time : ${(gVar.finishTime - gVar.startTime)/1000}s`);
+                        //    log(`time : ${(gVar.finishTime - gVar.startTime)/1000}s`);
                     })
                     removeClassAll('covered')
                     addClassAll('m9', 'mine9')
@@ -193,44 +195,46 @@ function rightClick() {
         //mines[i].bind('contextmenu', myRightClick)
     }
 }
-//左键单击操作
+
+// 左键单击操作
 function check() {
-    //console.log('check');
+    //log('check');
     bindAll('.mine', 'click', (event) => {
-        //console.log('check event.target.classList:', event.target.classList);
+        //log('check event.target.classList:', event.target.classList);
         if (event.target.classList.contains('mineMayBe')) {
             return
         }
-        // console.log('check', `event.target.innerHTML = ${event.target.innerHTML}`)
-        // console.log('check', `event.target.data.x = ${event.target.dataset.locationx}`)
-        // console.log('check', `event.target.data.y = ${event.target.dataset.locationy}`)
-        // console.log('check', `event.target.data.id = ${event.target.id}`)
-        // console.log('check', `event.target.data.value = ${event.target.dataset.value}`)
+        // log('check', `event.target.innerHTML = ${event.target.innerHTML}`)
+        // log('check', `event.target.data.x = ${event.target.dataset.locationx}`)
+        // log('check', `event.target.data.y = ${event.target.dataset.locationy}`)
+        // log('check', `event.target.data.id = ${event.target.id}`)
+        // log('check', `event.target.data.value = ${event.target.dataset.value}`)
         let element = event.target
         let mineValue = event.target.dataset.value
         gVar.clicked.push(element.id)
         switch (mineValue) {
             case '9':
-                //console.log('check-boom');
+                //log('check-boom');
                 boom(element)
                 //alert('boom!!!!!!!!!')
                 break;
             case '0':
-                //console.log('check-mineValue = 0');
+                //log('check-mineValue = 0');
                 showAround(element)
                 break;
             default:
-                //console.log('check-mineValue = 0 - 9');
+                //log('check-mineValue = 0 - 9');
                 commonBoom(element)
                 aroundIsChecked(element)
         }
     })
 }
-//如果左键点击后如果四周雷已被排空则点亮周围
+
+// 如果左键点击后如果四周雷已被排空则点亮周围
 var aroundIsChecked = function(element) {
     let x = element.dataset.locationx
     let y = element.dataset.locationy
-    //console.log('aroundIsChecked', `x=${x} y=${y}`);
+    //log('aroundIsChecked', `x=${x} y=${y}`);
     let aroundMarkedMines = []
     let aroundMines = []
     let aroundIds = []
@@ -247,7 +251,7 @@ var aroundIsChecked = function(element) {
                 var tempJ = j.toString()
             }
             let tempElement = document.getElementById(tempI + tempJ)
-            //console.log('tempElement', tempElement);
+            //log('tempElement', tempElement);
             if (tempElement) {
                 if (gVar.marked.includes(tempElement.id)) {
                     aroundMarkedMines.push(tempElement.id)
@@ -258,18 +262,18 @@ var aroundIsChecked = function(element) {
                 aroundIds.push(tempElement.id)
             }
             // if (tempElement) {
-            //     console.log('showAround', tempElement.id);
+            //     log('showAround', tempElement.id);
             //     commonBoom(tempElement)
             //     if (tempElement.dataset.value == 0) {
             //         if (!gVar.clicked.includes(tempElement.id)) {
             //             tempElement.click()
             //         }
-            //         console.log('showAround', `tempElement.dataset.value = ${tempElement.dataset.value}`);
+            //         log('showAround', `tempElement.dataset.value = ${tempElement.dataset.value}`);
             //     }
             // }
         }
     }
-    //console.log('aroundIsChecked', `aroundIds = ${aroundIds} aroundMarkedMines = ${aroundMarkedMines} aroundMines = ${aroundMines} gVar.mineMap = ${gVar.mineMap}`);
+    //log('aroundIsChecked', `aroundIds = ${aroundIds} aroundMarkedMines = ${aroundMarkedMines} aroundMines = ${aroundMines} gVar.mineMap = ${gVar.mineMap}`);
     if (aroundMarkedMines.length === aroundMines.length && aroundMines.length !== 0) {
         for (var i = 0; i < aroundMines.length; i++) {
             if (!gVar.mineMap.includes(aroundMarkedMines[i])) {
@@ -281,7 +285,7 @@ var aroundIsChecked = function(element) {
                 // for (var i = 0; i < gVar.marked.length; i++) {
                 //     if (!gVar.mineMap.includes(gVar.marked[i])) {
                 //         let tempElement = document.getElementById(gVar.marked[i])
-                //         console.log('boom tempElement = ', tempElement);
+                //         log('boom tempElement = ', tempElement);
                 //         toggleClass(tempElement, 'mineWrong')
                 //     }
                 // }
@@ -302,83 +306,10 @@ var aroundIsChecked = function(element) {
     }
 }
 
-var random01 = function(n) {
-    var r = Math.random()
-    r *= 100000
-    r = Math.floor(r)
-    return r % n
-}
 
-var randomLine01 = function(n) {
-    //随机生产一串01
-    var arr = []
-    for (var i = 0; i < n; i++) {
-        arr[i] = random01()
-    }
-    return arr
-}
-
-var randomLine09 = function(n, x) {
-    //随机成生x个9
-    var arr = []
-    var temp = []
-    for (let i = 0; i < x; i++) {
-        let num = random01(n)
-        if (temp.includes(num)) {
-            i--
-            continue
-        }
-        temp[i] = num
-    }
-    //console.log('randomLine01', `temp = ${temp}`);
-    for (let i = 0; i < n; i++) {
-        arr[i] = 0
-    }
-    for (let i = 0; i < temp.length; i++) {
-        arr[temp[i]] = 9
-    }
-    //console.log('randomLine01', `arr = ${arr}`);
-    return arr
-}
-
-function randomLine(m, n, x) {
-    //随机生成 M*N 0 9矩阵 有 x 个 9
-    var arr = []
-    let temp = randomLine09(m * n, x)
-    for (var i = 0; i < n; i++) {
-        arr.push(temp.slice(i * m, m * (i + 1)))
-        //log('randomLine', `temp = ${temp.slice(i, m*(i+1))}`)
-    }
-    return arr
-}
-
-var markedSquare = function(array) {
-    //扫雷主逻辑
-    var arr = array.slice(0)
-    for (var i = 0; i < array.length; i++) {
-        for (var j = 0; j < array[i].length; j++) {
-            if (array[i][j] === 0) {
-                var score = 0
-                for (var m = -1; m <= 1; m++) {
-                    for (var n = -1; n <= 1; n++) {
-                        if ((i + m) < 0 || (j + n) < 0 || (i + m) >= array.length || (j + n) > array[i].length) {
-                            continue
-                        } else {
-                            if (array[i + m][j + n] === 9) {
-                                score++
-                            }
-                        }
-                    }
-                }
-                arr[i][j] = score
-            }
-        }
-    }
-    return arr
-}
 //生成随机棋盘
 function makeRandomLine(buttonId) {
-    //console.log('makeRandomLine', `buttonId = ${buttonId}`);
+    //log('makeRandomLine', `buttonId = ${buttonId}`);
     let buttonRank = e('#id-button-rank')
     buttonRank.classList.remove('hide')
     switch (buttonId) {
@@ -398,7 +329,7 @@ function makeRandomLine(buttonId) {
             gVar.level = 2
             break;
         default:
-            //console.log('makeRandomLine false');
+            //log('makeRandomLine false');
             var arr = []
     }
     gVar.randomLineArr = arr
@@ -411,7 +342,7 @@ function chessBoardTemplate(arr) {
         t += `
         <tr class="covered">`
         for (var j = 0; j < arr[i].length; j++) {
-            //console.log('chessBoardTemplate', arr[i][j])
+            //log('chessBoardTemplate', arr[i][j])
             if (i < 10 && i > 0) {
                 var tempI = '0' + i.toString()
             } else {
@@ -429,7 +360,7 @@ function chessBoardTemplate(arr) {
         t += `
         </tr>`
     }
-    //console.log('chessBoardTemplate', t);
+    //log('chessBoardTemplate', t);
     return t
 }
 //插入棋盘模板
@@ -451,9 +382,9 @@ function generateLayout() {
             gVar = new mineApp()
             let myDate = new Date();
             gVar.startTime = myDate.getTime()
-            //console.log('gVar.startTime = ', gVar.startTime);
+            //log('gVar.startTime = ', gVar.startTime);
             let arr = makeRandomLine(button.id)
-            //console.log('generateLayout', arr);
+            //log('generateLayout', arr);
             let t = chessBoardTemplate(arr)
             buildLayout(t)
             check()
@@ -463,154 +394,15 @@ function generateLayout() {
     }
 }
 
-//alert 样式
-var buttonTemplate = function(title, index) {
-    var t = `
-        <button class='modal-action-button'
-                data-index="${index}">${title}</button>
-    `
-    return t
-}
 
-var Actions = function(title, actions, callback) {
-    e('#unFind-mines-number').classList.add('hide')
-    /*
-    title 是 string
-    actions 是一个包含 string 的数组
-    callback 是一个如下的函数
-    function(index) {
-        // index 是下标, 具体如下
-        // index 如果是 -1 表明用户点击了 cancel
-    }
-
-    这个函数生成一个弹窗页面
-    弹窗包含 title 作为标题
-    actions 里面的 string 作为标题生成按钮
-    弹窗还包含一个 Cancel 按钮
-    点击按钮的时候, 调用 callback(index)
-    */
-    var buttons = []
-    for (var i = 0; i < actions.length; i++) {
-        var a = actions[i]
-        buttons.push(buttonTemplate(a, i))
-    }
-    var actionButtons = buttons.join('')
-    var t = `
-    <div class='modal-container modal-remove'>
-        <div class='modal-mask'></div>
-        <div class="modal-alert vertical-center">
-            <div class="modal-title">
-                ${title}
-            </div>
-            <div class="modal-message">
-                ${actionButtons}
-            </div>
-            <div class='modal-control'>
-                <button class="modal-button modal-action-button" data-index="-1">Cancel</button>
-            </div>
-        </div>
-    </div>
-    `
-    appendHtml(e('body'), t)
-    // css
-    var css = `
-    <style class="modal-remove">
-        .modal-container {
-            position: fixed;
-            top: 0px;
-            left: 0px;
-            width: 100%;
-            height: 100%;
-        }
-        .modal-mask {
-            position: fixed;
-            top: 0px;
-            left: 0px;
-            width: 100%;
-            height: 100%;
-            background: black;
-            opacity: 0.5;
-        }
-        .modal-alert {
-            margin: 0 auto;
-            width: 200px;
-            opacity: 1;
-        }
-        .modal-title {
-            text-align: center;
-            font-size: 27px;
-            background: lightblue;
-        }
-        .modal-message {
-            padding: 10px 5px;
-            background: white;
-        }
-        .modal-input {
-            width: 100%;
-        }
-        .modal-control {
-            font-size: 0;
-        }
-        button {
-            width: 100%;
-        }
-        .modal-button {
-            height: 100%;
-            font-size: 18px;
-            border: 0;
-        }
-        .vertical-center {
-            top: 50%;
-            position: relative;
-            transform: translateY(-50%);
-        }
-    </style>
-    `
-    appendHtml(e('head'), css)
-    // event
-    bindAll('.modal-action-button', 'click', function(event) {
-        //console.log('click button')
-        var index = event.target.dataset.index
-        callback(index)
-        removeAll('.modal-remove')
-    })
-}
-
-//备用画板
-function draw() {
-    //console.log('draw');
-    let canvas = e("#id-draw-table")
-    if (canvas == null) {
-        //console.log('canvas false')
-        return false
-    }
-
-    let context = canvas.getContext("2d")
-    //实践表明在不设施fillStyle下的默认fillStyle=black
-    context.fillRect(0, 0, 100, 100)
-    //实践表明在不设施strokeStyle下的默认strokeStyle=black
-    context.strokeRect(120, 0, 100, 100)
-
-    //设置纯色
-    context.fillStyle = "red"
-    context.strokeStyle = "blue"
-    context.fillRect(0, 120, 100, 100)
-    context.strokeRect(120, 120, 100, 100)
-
-    //设置透明度实践证明透明度值>0,<1值越低，越透明，值>=1时为纯色，值<=0时为完全透明
-    context.fillStyle = "rgba(255,0,0,0.2)"
-    context.strokeStyle = "rgba(255,0,0,0.2)"
-    context.fillRect(240, 0, 100, 100)
-    context.strokeRect(240, 120, 100, 100)
-}
 //初始化地雷坐标数组
 function init() {
     let mines = eAll('.m9')
-    //console.log(mines);
+    //log(mines);
     for (var i = 0; i < mines.length; i++) {
         gVar.mineMap.push(mines[i].id)
     }
-    //console.log('gVar.mineMap = ', gVar.mineMap)
+    //log('gVar.mineMap = ', gVar.mineMap)
     upDateUnfindMinesNumber()
     let buttonList = eAll('.level-button')
     for (var i = 0; i < buttonList.length; i++) {
@@ -639,13 +431,13 @@ var bindButtonReplay = function() {
 //显示最短用时
 var showMaxScore = function(score) {
     let bestScore = getBestScore()
-    //console.log('showMaxScore score = ', score);
-    //console.log('showMaxScore bestScore = ', bestScore);
+    //log('showMaxScore score = ', score);
+    //log('showMaxScore bestScore = ', bestScore);
     switch (gVar.level) {
         case 0:
-            //console.log('case 0');
+            //log('case 0');
             if (Number(bestScore[0]) > Number(score)) {
-                //console.log('bestScore[0] > score');
+                //log('bestScore[0] > score');
                 bestScore[0] = score
                 save(bestScore)
             }
@@ -653,7 +445,7 @@ var showMaxScore = function(score) {
             break;
         case 1:
             if (Number(bestScore[1]) > Number(score)) {
-                //console.log('bestScore[0] > score');
+                //log('bestScore[0] > score');
                 bestScore[1] = score
                 save(bestScore)
             }
@@ -661,14 +453,14 @@ var showMaxScore = function(score) {
             break;
         case 2:
             if (Number(bestScore[2]) > Number(score)) {
-                //console.log('bestScore[0] > score');
+                //log('bestScore[0] > score');
                 bestScore[2] = score
                 save(bestScore)
             }
             return bestScore[2]
             break;
         default:
-            console.log('showMaxScore error');
+            log('showMaxScore error');
     }
 }
 
@@ -688,7 +480,7 @@ var load = function() {
     if (localStorage.bestScore == undefined) {
         save([1111111111111, 1111111111111, 11111111111111])
     }
-    console.log('localStorage.bestScore:', localStorage.bestScore)
+    log('localStorage.bestScore:', localStorage.bestScore)
     var s = localStorage.bestScore
     return JSON.parse(s)
     // window.ontouchstart = function(e) {
